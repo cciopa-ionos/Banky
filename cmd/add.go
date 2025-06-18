@@ -1,6 +1,10 @@
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	"encoding/json"
+	"github.com/spf13/cobra"
+	"log"
+)
 
 var (
 	deposit int
@@ -13,6 +17,14 @@ var (
 		Short: "add money to an account and subtract from another",
 		Long:  "add money to an account",
 		Run: func(cmd *cobra.Command, args []string) {
+
+			jsonTodo, err := json.Marshal(todo)
+
+			if err != nil {
+
+				log.Fatalf("Error occurred during marshalling: %s", err.Error())
+
+			}
 
 		},
 	}
