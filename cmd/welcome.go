@@ -12,10 +12,9 @@ var (
 	scream bool
 
 	welcomeCmd = &cobra.Command{
-		Use:       "welcome",
-		Short:     "cli for banky",
-		Long:      "bankycli is a command line interface for banking transactions and operations ",
-		ValidArgs: []string{"name", "id", "scream"},
+		Use:   "welcome",
+		Short: "cli for banky",
+		Long:  "bankycli is a command line interface for banking transactions and operations ",
 		Run: func(cmd *cobra.Command, args []string) {
 			var output string
 
