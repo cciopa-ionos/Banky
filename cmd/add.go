@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	"encoding/json"
 	"github.com/spf13/cobra"
-	"log"
 )
 
 var (
@@ -18,20 +16,19 @@ var (
 		Long:  "add money to an account",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			jsonTodo, err := json.Marshal(todo)
-
-			if err != nil {
-
-				log.Fatalf("Error occurred during marshalling: %s", err.Error())
-
-			}
+			//jsonTodo, err := json.Marshal(todo)
+			//
+			//if err != nil {
+			//
+			//	log.Fatalf("Error occurred during marshalling: %s", err.Error())
+			//
+			//}
 
 		},
 	}
 )
 
 func init() {
-	welcomeCmd.Flags().StringVarP(&name, "receiver", "n", "", "name of the receiver")
-	welcomeCmd.Flags().StringVarP(&id, "initiator", "i", "", "name of the initiator")
-	rootCmd.AddCommand(addCmd)
+	addCmd.Flags().StringVarP(&Name, "sum", "s", "", "sum of money added to the account")
+	TransactionCmd.AddCommand(addCmd)
 }

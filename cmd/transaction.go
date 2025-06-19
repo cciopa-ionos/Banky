@@ -1,5 +1,25 @@
 package cmd
 
+import (
+	"fmt"
+	"github.com/spf13/cobra"
+)
+
+var (
+	TransactionCmd = &cobra.Command{
+		Use:   "transaction",
+		Short: "transaction commands",
+		Long:  "transaction commands added to an account, or list the deposit amount",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("SMTH Works!")
+		},
+	}
+)
+
+func init() {
+	RootCmd.AddCommand(TransactionCmd)
+}
+
 type person struct {
 	id      string
 	name    string

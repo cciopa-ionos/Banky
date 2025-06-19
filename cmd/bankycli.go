@@ -9,9 +9,9 @@ import (
 	"os"
 )
 
-// rootCmd represents the base command when called without any subcommands
+// RootCmd represents the base command when called without any subcommands
 var (
-	rootCmd = &cobra.Command{
+	RootCmd = &cobra.Command{
 		Use:              "bankycli",
 		Short:            "cli for banking",
 		Long:             "bankycli is a command line interface for banking transactions and operations ",
@@ -22,7 +22,7 @@ var (
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -37,10 +37,7 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().StringP("welcome", "w", "", "welcome command")
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func addCommands() {
-	rootCmd.AddCommand(welcomeCmd)
+	RootCmd.Flags().StringP("welcome", "w", "", "welcome command")
+	RootCmd.Flags().BoolP("toggle", "", false, "Help message for toggle")
+	RootCmd.Flags().StringP("transaction", "t", "", "transaction command")
 }

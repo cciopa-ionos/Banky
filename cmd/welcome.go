@@ -7,24 +7,24 @@ import (
 )
 
 var (
-	name   string
+	Name   string
 	id     string
 	scream bool
 
 	welcomeCmd = &cobra.Command{
 		Use:   "welcome",
-		Short: "cli for banky",
-		Long:  "bankycli is a command line interface for banking transactions and operations ",
+		Short: "welcome print for this bankycli",
+		Long:  "bankycli is a command line interface for banking transactions and operations",
 		Run: func(cmd *cobra.Command, args []string) {
 			var output string
 
-			if name != "" && id != "" {
+			if Name != "" && id != "" {
 				fmt.Println("Error: Both name and id provided. Please provide only one.")
 				return
 			}
 
-			if name != "" {
-				output = name
+			if Name != "" {
+				output = Name
 			} else if id != "" {
 				output = id
 			}
@@ -47,8 +47,8 @@ var (
 )
 
 func init() {
-	welcomeCmd.Flags().StringVarP(&name, "name", "n", "", "name of the account")
+	welcomeCmd.Flags().StringVarP(&Name, "name", "n", "", "name of the account")
 	welcomeCmd.Flags().StringVarP(&id, "id", "i", "", "id of the account")
 	welcomeCmd.Flags().BoolVar(&scream, "scream", false, "scream account")
-	rootCmd.AddCommand(welcomeCmd)
+	RootCmd.AddCommand(welcomeCmd)
 }
