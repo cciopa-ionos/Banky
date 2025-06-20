@@ -1,30 +1,42 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
+	"os"
+	"strings"
 )
 
 var (
 	listCmd = &cobra.Command{
 		Use:   "list",
-		Short: "list money to an account and subtract from another",
-		Long:  "list money to an account",
+		Short: "list users name",
+		Long:  "list a list of users name",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("WELCOME TO LIST!")
-			//jsonTodo, err := json.Marshal(todo)
+			data, err := os.ReadFile("./banky/banky.json")
+			check(err)
 
-			//if err != nil {
-			//
-			//	log.Fatalf("Error occurred during marshalling: %s", err.Error())
-			//
-			//}
+			// Parse JSON as slice of maps
+			var jsonArray []map[string]interface{}
+			err = json.Unmarshal(data, &jsonArray)
+			check(err)
+
+			//Print Names
+			fmt.Printf("Names:")
+			for _, obj := range jsonArray {
+				for key, val := range obj {
+					if strings.HasPrefix(key, "Name") {
+						fmt.Printf("\n %v", val)
+					}
+				}
+			}
+			fmt.Printf("\n\n")
 
 		},
 	}
 )
 
 func init() {
-	addCmd.Flags().StringVarP(&Name, "list", "l", "", "list the sum of money added to the account")
-	TransactionCmd.AddCommand(listCmd)
+	accountCmd.AddCommand(listCmd)
 }

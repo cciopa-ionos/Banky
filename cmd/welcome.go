@@ -1,45 +1,56 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
+	"os"
 	"strings"
 )
 
 var (
-	Name   string
+	user   string
 	id     string
 	scream bool
 
 	welcomeCmd = &cobra.Command{
 		Use:   "welcome",
-		Short: "welcome print for this bankycli",
-		Long:  "bankycli is a command line interface for banking transactions and operations",
+		Short: "welcome print",
+		Long:  "",
 		Run: func(cmd *cobra.Command, args []string) {
-			var output string
-
-			if Name != "" && id != "" {
-				fmt.Println("Error: Both name and id provided. Please provide only one.")
+			if user != "" && scream != true {
+				fmt.Printf("Hello %v\n", user)
+				return
+			} else if scream == true {
+				fmt.Printf("Hello %v\n", strings.ToUpper(user))
 				return
 			}
 
-			if Name != "" {
-				output = Name
-			} else if id != "" {
-				output = id
-			}
+			data, err := os.ReadFile("./banky/banky.json")
+			check(err)
 
-			if scream {
-				if output != "" {
-					fmt.Printf("WELCOME %s TO BANKYCLI!\n", strings.ToUpper(output))
-				} else {
-					fmt.Println("WELCOME TO BANKYCLI!")
-				}
-			} else {
-				if output != "" {
-					fmt.Printf("Welcome %s to bankycli!\n", output)
-				} else {
-					fmt.Println("Welcome to bankycli!")
+			// Parse JSON as slice of maps
+			var jsonArray []map[string]interface{}
+			err = json.Unmarshal(data, &jsonArray)
+			check(err)
+
+			aux := 0
+			if id != "" {
+				for _, obj := range jsonArray {
+					for key, val := range obj {
+						if key == "Id" && val == id {
+							aux = 1
+						}
+						if aux == 1 && key == "Name" {
+							aux = 0
+							if scream {
+
+								fmt.Printf("HELLO %v\n", strings.ToUpper(val.(string)))
+								return
+							}
+							fmt.Printf("Hello %v\n", val)
+						}
+					}
 				}
 			}
 		},
@@ -47,8 +58,8 @@ var (
 )
 
 func init() {
-	welcomeCmd.Flags().StringVarP(&Name, "name", "n", "", "name of the account")
+	welcomeCmd.Flags().StringVarP(&user, "user", "u", "", "name of the account")
 	welcomeCmd.Flags().StringVarP(&id, "id", "i", "", "id of the account")
 	welcomeCmd.Flags().BoolVar(&scream, "scream", false, "scream account")
-	RootCmd.AddCommand(welcomeCmd)
+	accountCmd.AddCommand(welcomeCmd)
 }
