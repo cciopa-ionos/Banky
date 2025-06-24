@@ -36,7 +36,3 @@ var (
 		},
 	}
 )
-
-func init() {
-	accountCmd.AddCommand(listCmd)
-}

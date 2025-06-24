@@ -17,5 +17,7 @@ var (
 )
 
 func init() {
-	bankycliCmd.AddCommand(accountCmd)
+	accountCmd.AddCommand(createCmd)
+	accountCmd.AddCommand(welcomeCmd)
+	accountCmd.AddCommand(listCmd)
 }

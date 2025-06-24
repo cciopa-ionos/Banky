@@ -61,5 +61,4 @@ func init() {
 	welcomeCmd.Flags().StringVarP(&user, "user", "u", "", "name of the account")
 	welcomeCmd.Flags().StringVarP(&id, "id", "i", "", "id of the account")
 	welcomeCmd.Flags().BoolVar(&scream, "scream", false, "scream account")
-	accountCmd.AddCommand(welcomeCmd)
 }
