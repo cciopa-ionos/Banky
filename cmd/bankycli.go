@@ -4,10 +4,8 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"bankycli/config"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"os"
 )
 
@@ -26,7 +24,6 @@ var (
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	config.initConfig()
 	if err := bankycliCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -42,11 +39,4 @@ func init() {
 
 	bankycliCmd.AddCommand(accountCmd)
 	bankycliCmd.AddCommand(transactionCmd)
-	bankycliCmd.PersistentFlags().StringVarP(&output, "output", "o", "table", "Output format (table|json)")
-
-	// Bind flag to Viper key
-	viper.BindPFlag("output", bankycliCmd.PersistentFlags().Lookup("output"))
-
-	// Bind to environment variable
-	viper.BindEnv("output", "BANKY_OUTPUT")
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"os"
 	"time"
 )
@@ -52,10 +53,15 @@ var (
 			updatedData, err := json.MarshalIndent(jsonArray, "", "	")
 			check(err)
 
-			if err := os.WriteFile("./banky/banky.json", updatedData, 0644); err != nil {
+			if err := os.WriteFile("./banky/banky.json", updatedData, 0666); err != nil {
 				check(err)
 			}
 
+			if output == "json" {
+				PrintTransactionJSON(auxValue)
+			} else if output == "yaml" {
+				PrintTransactionTable(auxValue)
+			}
 		},
 	}
 )
@@ -64,6 +70,8 @@ func init() {
 	addCmd.Flags().StringVarP(&idTr, "id", "i", "", "id of account")
 	addCmd.Flags().IntVarP(&sumTr, "sum", "s", 0, "sum of money added or retrieved")
 	addCmd.Flags().StringVarP(&description, "description", "d", "", "description of transaction")
+	addCmd.Flags().StringVarP(&output, "output", "o", "table", "output format: table or json")
+	viper.BindPFlag("output", addCmd.Flags().Lookup("output"))
 	addCmd.MarkFlagRequired("id")
 	addCmd.MarkFlagRequired("sum")
 }
