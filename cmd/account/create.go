@@ -1,13 +1,14 @@
-package cmd
+package account
 
 import (
+	"bankycli/internal/core"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
-	name string
+	name   string
+	output string
 
 	createCmd = &cobra.Command{
 		Use:   "create",
@@ -19,14 +20,14 @@ var (
 			if name != "" {
 				fmt.Printf("Created account for %s. \nWelcome to bankycli!\n", name)
 			}
-			auxValue := &Person{Id: randSeq(7), Name: name, Deposit: 0}
+			auxValue := &core.Person{Id: core.RandSeq(7), Name: name, Deposit: 0}
 
-			jsonFormating("./banky/banky.json", auxValue)
+			core.JsonFormating("./banky/banky.json", auxValue)
 
 			if output == "json" {
-				PrintPersonJSON(*auxValue)
-			} else if output == "yaml" {
-				PrintPersonTable(*auxValue)
+				core.PrintPersonJSON(*auxValue)
+			} else if output == "table" {
+				core.PrintPersonTable(*auxValue)
 			}
 		},
 	}
@@ -34,8 +35,7 @@ var (
 
 func init() {
 	createCmd.Flags().StringVarP(&name, "name", "n", "", "name of the owner")
-	createCmd.Flags().StringVarP(&name, "output", "o", "table", "output format: table or json")
-	viper.BindPFlag("output", createCmd.Flags().Lookup("output"))
+	createCmd.Flags().StringVarP(&output, "output", "o", "", "output format: table or json")
 	createCmd.MarkFlagRequired("name")
 
 }

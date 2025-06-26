@@ -1,6 +1,7 @@
-package cmd
+package transaction
 
 import (
+	"bankycli/internal/core"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
@@ -17,11 +18,11 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 
 			data, err := os.ReadFile("./banky/operations.json")
-			check(err)
+			core.Check(err)
 
 			var jsonArray []map[string]interface{}
 			err = json.Unmarshal(data, &jsonArray)
-			check(err)
+			core.Check(err)
 
 			fmt.Printf("The account with ID: %v\n\n", idList)
 			for _, obj := range jsonArray {

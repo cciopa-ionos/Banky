@@ -1,4 +1,4 @@
-package cmd
+package core
 
 import (
 	"encoding/json"
@@ -16,6 +16,7 @@ func init() {
 var (
 	letters          = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	numberLetter int = 9
+	Output       string
 )
 
 type Person struct {
@@ -31,7 +32,7 @@ type Transaction struct {
 	Date        time.Time
 }
 
-func randSeq(n int) string {
+func RandSeq(n int) string {
 	b := make([]rune, numberLetter)
 	for i := range b {
 		b[i] = letters[rand.Intn(len(letters))]
@@ -39,40 +40,13 @@ func randSeq(n int) string {
 	return string(b)
 }
 
-func check(err error) {
+func Check(err error) {
 	if err != nil {
 		print(err)
 	}
 }
 
-func jsonFormating(jsonfile string, str interface{}) {
-
-	////Marshal the respective struct
-	//jsonData, err := json.MarshalIndent(str, "", "	")
-	//check(err)
-	//
-	////	Check if file is empty and add []
-	//stats, err := os.Stat(jsonfile)
-	//check(err)
-	//existingData, err := os.ReadFile(jsonfile)
-	//check(err)
-	//if stats.Size() == 0 {
-	//	initial := []byte("[\n")
-	//	initial = append(initial, jsonData...)
-	//	initial = append(initial, '\n', ']')
-	//	err = os.WriteFile(jsonfile, initial, 0666)
-	//	check(err)
-	//} else {
-	//	// not first json data
-	//	insertion := append([]byte("\n"), jsonData...)
-	//	insertion = append(insertion, ',', '\n')
-	//
-	//	// always add the [ back after insertion
-	//	newContent := append([]byte{'['}, insertion...)
-	//	newContent = append(newContent, existingData[1:]...)
-	//	err = os.WriteFile(jsonfile, newContent, 0666)
-	//	check(err)
-	//}
+func JsonFormating(jsonfile string, str interface{}) {
 	var items []interface{}
 
 	fileData, err := os.ReadFile(jsonfile)
@@ -81,11 +55,11 @@ func jsonFormating(jsonfile string, str interface{}) {
 		if os.IsNotExist(err) || len(fileData) == 0 {
 			items = []interface{}{}
 		} else {
-			check(err)
+			Check(err)
 		}
 	} else {
 		if err := json.Unmarshal(fileData, &items); err != nil {
-			check(err)
+			Check(err)
 		}
 	}
 
@@ -109,6 +83,7 @@ func PrintPersonTable(data Person) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tNAME\tDEPOSIT")
 	fmt.Fprintf(w, "%s\t %s\t %d\n", data.Id, data.Name, data.Deposit)
+	w.Flush()
 }
 
 func PrintTransactionJSON(data *Transaction) {
@@ -123,5 +98,7 @@ func PrintTransactionJSON(data *Transaction) {
 func PrintTransactionTable(data *Transaction) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tAMOUNT\tDESCRIPTION\tDATE")
-	fmt.Fprintf(w, "%s\t %s\t %d\t %d\n", data.Id, data.Amount, data.Description, data.Date)
+	formattedDate := data.Date.Format("2022-01-02 15:04")
+	fmt.Fprintf(w, "%s\t %d\t %s\t %s\n", data.Id, data.Amount, data.Description, formattedDate)
+	w.Flush()
 }

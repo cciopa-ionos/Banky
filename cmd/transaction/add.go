@@ -1,9 +1,9 @@
-package cmd
+package transaction
 
 import (
+	"bankycli/internal/core"
 	"encoding/json"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"os"
 	"time"
 )
@@ -12,6 +12,7 @@ var (
 	sumTr       int
 	idTr        string
 	description string
+	output      string
 
 	addCmd = &cobra.Command{
 		Use:   "add",
@@ -25,22 +26,26 @@ var (
 			}
 
 			//adding operation to operations.json
-			auxValue := &Transaction{
+			auxValue := &core.Transaction{
 				Id:          idTr,
 				Amount:      sumTr,
 				Description: description,
 				Date:        time.Now(),
 			}
 
-			jsonFormating("./banky/operations.json", auxValue)
+			// Load config
+			cfg := core.LoadConfig()
 
-			// changing the deposit field in banky.json
-			data, err := os.ReadFile("./banky/banky.json")
-			check(err)
+			// Write to operations.json (path from config)
+			core.JsonFormating(cfg.OperationsPath, auxValue)
+
+			// Read update banky.json using config
+			data, err := os.ReadFile(cfg.BankyPath)
+			core.Check(err)
 
 			var jsonArray []map[string]interface{}
 			err = json.Unmarshal(data, &jsonArray)
-			check(err)
+			core.Check(err)
 
 			for _, obj := range jsonArray {
 				idParse, exists := obj["Id"].(string)
@@ -51,16 +56,16 @@ var (
 			}
 
 			updatedData, err := json.MarshalIndent(jsonArray, "", "	")
-			check(err)
+			core.Check(err)
 
 			if err := os.WriteFile("./banky/banky.json", updatedData, 0666); err != nil {
-				check(err)
+				core.Check(err)
 			}
 
 			if output == "json" {
-				PrintTransactionJSON(auxValue)
-			} else if output == "yaml" {
-				PrintTransactionTable(auxValue)
+				core.PrintTransactionJSON(auxValue)
+			} else if output == "table" {
+				core.PrintTransactionTable(auxValue)
 			}
 		},
 	}
@@ -70,8 +75,7 @@ func init() {
 	addCmd.Flags().StringVarP(&idTr, "id", "i", "", "id of account")
 	addCmd.Flags().IntVarP(&sumTr, "sum", "s", 0, "sum of money added or retrieved")
 	addCmd.Flags().StringVarP(&description, "description", "d", "", "description of transaction")
-	addCmd.Flags().StringVarP(&output, "output", "o", "table", "output format: table or json")
-	viper.BindPFlag("output", addCmd.Flags().Lookup("output"))
+	addCmd.Flags().StringVarP(&output, "output", "o", "", "output format: table or json")
 	addCmd.MarkFlagRequired("id")
 	addCmd.MarkFlagRequired("sum")
 }

@@ -4,15 +4,14 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"bankycli/cmd/account"
+	"bankycli/cmd/transaction"
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
 )
 
-// RootCmd represents the base command when called without any subcommands
 var (
-	output string
-
 	bankycliCmd = &cobra.Command{
 		Use:              "bankycli",
 		Short:            "cli for banking",
@@ -21,8 +20,6 @@ var (
 	}
 )
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := bankycliCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -31,12 +28,6 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.banky.yaml)")
-
-	bankycliCmd.AddCommand(accountCmd)
-	bankycliCmd.AddCommand(transactionCmd)
+	bankycliCmd.AddCommand(account.AccountCmd)
+	bankycliCmd.AddCommand(transaction.TransactionCmd)
 }

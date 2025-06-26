@@ -1,6 +1,7 @@
-package cmd
+package account
 
 import (
+	"bankycli/internal/core"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
@@ -18,12 +19,19 @@ var (
 		Short: "welcome print",
 		Long:  "",
 		Run: func(cmd *cobra.Command, args []string) {
+			if scream == "yes" {
+				fmt.Printf("HELLO %v\n", strings.ToUpper(user))
+				return
+			} else {
+				fmt.Printf("Hello %v\n", user)
+				return
+			}
 			data, err := os.ReadFile("./banky/banky.json")
-			check(err)
+			core.Check(err)
 
 			var jsonArray []map[string]interface{}
 			err = json.Unmarshal(data, &jsonArray)
-			check(err)
+			core.Check(err)
 
 			for _, obj := range jsonArray {
 				for key, val := range obj {
@@ -35,7 +43,6 @@ var (
 						if valStr == id {
 							nameVal, _ := obj["Name"]
 							nameStr, _ := nameVal.(string)
-							fmt.Println("DEBUG: scream flag =", scream)
 							if scream == "yes" {
 								fmt.Printf("HELLO %v\n", strings.ToUpper(nameStr))
 							} else if scream == "no" {
