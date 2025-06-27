@@ -43,7 +43,9 @@ func RandSeq(n int) string {
 func Check(err error) {
 	if err != nil {
 		print(err)
+		os.Exit(1)
 	}
+
 }
 
 func JsonFormating(jsonfile string, str interface{}) {
@@ -51,7 +53,6 @@ func JsonFormating(jsonfile string, str interface{}) {
 
 	fileData, err := os.ReadFile(jsonfile)
 	if err != nil {
-		// If file is empty, start with empty slice
 		if os.IsNotExist(err) || len(fileData) == 0 {
 			items = []interface{}{}
 		} else {
@@ -82,7 +83,7 @@ func PrintPersonJSON(data Person) {
 func PrintPersonTable(data Person) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tNAME\tDEPOSIT")
-	fmt.Fprintf(w, "%s\t %s\t %d\n", data.Id, data.Name, data.Deposit)
+	fmt.Fprintf(w, "%s\t%s\t%d\n", data.Id, data.Name, data.Deposit)
 	w.Flush()
 }
 
@@ -98,7 +99,7 @@ func PrintTransactionJSON(data *Transaction) {
 func PrintTransactionTable(data *Transaction) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tAMOUNT\tDESCRIPTION\tDATE")
-	formattedDate := data.Date.Format("2022-01-02 15:04")
-	fmt.Fprintf(w, "%s\t %d\t %s\t %s\n", data.Id, data.Amount, data.Description, formattedDate)
+	formattedDate := data.Date.Format("2006-01-02 15:04")
+	fmt.Fprintf(w, "%s\t%d\t%s\t%s\n", data.Id, data.Amount, data.Description, formattedDate)
 	w.Flush()
 }

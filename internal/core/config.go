@@ -9,11 +9,10 @@ type Config struct {
 
 func LoadConfig() *Config {
 	cfg := &Config{
-		OperationsPath: "./banky/operations.json",
-		BankyPath:      "./banky/banky.json",
+		OperationsPath: "example",
+		BankyPath:      "example",
 	}
 
-	// Override with env vars
 	if val := os.Getenv("OPERATIONS_PATH"); val != "" {
 		cfg.OperationsPath = val
 	}

@@ -19,14 +19,17 @@ var (
 		Short: "welcome print",
 		Long:  "",
 		Run: func(cmd *cobra.Command, args []string) {
-			if scream == "yes" {
+			if scream == "yes" && user != "" {
 				fmt.Printf("HELLO %v\n", strings.ToUpper(user))
 				return
-			} else {
+			} else if scream == "no" && user != "" {
 				fmt.Printf("Hello %v\n", user)
 				return
 			}
-			data, err := os.ReadFile("./banky/banky.json")
+
+			cfg := core.LoadConfig()
+
+			data, err := os.ReadFile(cfg.BankyPath)
 			core.Check(err)
 
 			var jsonArray []map[string]interface{}
@@ -34,24 +37,25 @@ var (
 			core.Check(err)
 
 			for _, obj := range jsonArray {
-				for key, val := range obj {
-					if key == "Id" {
-						valStr, ok := val.(string)
-						if !ok {
-							continue
-						}
-						if valStr == id {
-							nameVal, _ := obj["Name"]
-							nameStr, _ := nameVal.(string)
-							if scream == "yes" {
-								fmt.Printf("HELLO %v\n", strings.ToUpper(nameStr))
-							} else if scream == "no" {
-								fmt.Printf("Hello %v\n", nameStr)
-							}
-							return
-						}
+				//fmt.Printf("Hello %v\n", obj["Id"])
+				//for key, val := range obj {
+				//	if key == "Id" {
+				//		valStr, ok := val.(string)
+				//		if !ok {
+				//			continue
+				//		}
+				if obj["Id"] == id {
+					nameVal, _ := obj["Name"]
+					nameStr, _ := nameVal.(string)
+					if scream == "yes" {
+						fmt.Printf("HELLO %v\n", strings.ToUpper(nameStr))
+					} else if scream == "no" {
+						fmt.Printf("Hello %v\n", nameStr)
 					}
+					return
 				}
+				//}
+				//}
 			}
 		},
 	}
