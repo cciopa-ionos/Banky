@@ -1,0 +1,52 @@
+[
+  {
+    "Deposit": 0,
+    "Id": "RwVZAYbgt",
+    "Name": "HELLO",
+    "Transactions": [
+      {
+        "Amount": 0,
+        "Date": "2025-06-29T17:52:05.091610512+03:00",
+        "Description": "Creating Account"
+      },
+      {
+        "Amount": -500,
+        "Date": "2025-06-29T18:18:05.316256934+03:00",
+        "Description": "BLabla"
+      }
+    ]
+  },
+  {
+    "Id": "QAsuLtdpT",
+    "Name": "NAME",
+    "Transactions": [
+      {
+        "Amount": 0,
+        "Date": "2025-06-29T17:53:01.474408489+03:00",
+        "Description": "Creating Account"
+      }
+    ]
+  },
+  {
+    "Id": "ySSdXlILU",
+    "Name": "NAME",
+    "Transactions": [
+      {
+        "Amount": 0,
+        "Date": "2025-06-29T17:53:15.682181981+03:00",
+        "Description": "Creating Account"
+      }
+    ]
+  },
+  {
+    "Id": "SVqhfUkmr",
+    "Name": "Giovani",
+    "Transactions": [
+      {
+        "Amount": 0,
+        "Description": "Creating Account",
+        "Date": "2025-06-29T23:46:43.728898909+03:00"
+      }
+    ]
+  }
+]
