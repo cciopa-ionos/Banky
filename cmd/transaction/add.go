@@ -3,6 +3,7 @@ package transaction
 import (
 	"bankycli/internal/core"
 	"encoding/json"
+	"fmt"
 	"github.com/spf13/cobra"
 	"os"
 	"time"
@@ -18,11 +19,13 @@ var (
 		Use:   "add",
 		Short: "add sum of money",
 		Long:  "add sum of money",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if sumTr == 0 {
-				print("suma is required!\n")
+				fmt.Fprintf(os.Stderr, "suma is required!\n")
+				os.Exit(1)
 			} else if idTr == "" {
-				print("id is required!\n")
+				fmt.Fprintf(os.Stderr, "suma is required!\n")
+				os.Exit(1)
 			}
 
 			//adding operation to operations.json
@@ -37,11 +40,16 @@ var (
 
 			// Read update banky.json using config
 			data, err := os.ReadFile(cfg.BankyPath)
-			core.Check(err)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error reading file %s: %v\n", cfg.BankyPath, err)
+				os.Exit(1)
+			}
 
 			var jsonArray []map[string]interface{}
-			err = json.Unmarshal(data, &jsonArray)
-			core.Check(err)
+			if err := json.Unmarshal(data, &jsonArray); err != nil {
+				fmt.Fprintf(os.Stderr, "error parsing JSON: %v\n", err)
+				os.Exit(1)
+			}
 
 			for _, obj := range jsonArray {
 				idParse, exists := obj["Id"].(string)
@@ -55,17 +63,17 @@ var (
 			}
 
 			updatedData, err := json.MarshalIndent(jsonArray, "", "	")
-			core.Check(err)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error marshalling JSON: %v\n", err)
+				os.Exit(1)
+			}
 
 			if err := os.WriteFile("./banky/banky.json", updatedData, 0666); err != nil {
-				core.Check(err)
+				fmt.Fprintf(os.Stderr, "error writing to file %s: %v\n", cfg.BankyPath, err)
+				os.Exit(1)
 			}
 
-			if output == "json" {
-				core.PrintTransactionJSON(auxValue)
-			} else if output == "table" {
-				core.PrintTransactionTable(auxValue)
-			}
+			return nil
 		},
 	}
 )

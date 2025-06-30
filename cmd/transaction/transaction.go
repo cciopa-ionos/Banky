@@ -9,7 +9,6 @@ var (
 		Use:   "transaction",
 		Short: "transaction commands",
 		Long:  "transaction commands",
-		Run:   func(cmd *cobra.Command, args []string) {},
 	}
 )
 

@@ -39,14 +39,6 @@ func RandSeq(n int) string {
 	return string(b)
 }
 
-func Check(err error) {
-	if err != nil {
-		print(err)
-		os.Exit(1)
-	}
-
-}
-
 func JsonFormating(jsonfile string, str interface{}) {
 	var items []interface{}
 
@@ -56,29 +48,38 @@ func JsonFormating(jsonfile string, str interface{}) {
 
 	if dataFileSize == 0 {
 		if err := os.WriteFile(jsonfile, []byte("[]"), 0666); err != nil {
-			fmt.Printf("Error adding [] to file %s: %v\n", jsonfile, err)
-			return
+			fmt.Fprintf(os.Stderr, "Error adding [] to file %s: %v\n", jsonfile, err)
+			os.Exit(1)
 		}
 	}
 
 	fileData, err := os.ReadFile(jsonfile)
 	if err != nil {
-		if os.IsNotExist(err) || len(fileData) == 0 {
-			items = []interface{}{}
-		} else {
-			Check(err)
-		}
+		fmt.Fprintf(os.Stderr, "Error reading file %s: %v\n", jsonfile, err)
+		os.Exit(1)
+	}
+
+	if len(fileData) == 0 {
+		items = []interface{}{}
 	} else {
 		if err := json.Unmarshal(fileData, &items); err != nil {
-			fmt.Printf("Error: Cannot read %v\n", err)
-			Check(err)
+			fmt.Fprintf(os.Stderr, "Error parsing JSON from %s: %v\n", jsonfile, err)
+			os.Exit(1)
 		}
 	}
+
 	items = append(items, str)
 
-	updatedData, _ := json.MarshalIndent(items, "", "  ")
+	updatedData, err := json.MarshalIndent(items, "", "  ")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error marshalling JSON data: %v\n", err)
+		os.Exit(1)
+	}
 
-	os.WriteFile(jsonfile, updatedData, 0666)
+	if err := os.WriteFile(jsonfile, updatedData, 0666); err != nil {
+		fmt.Fprintf(os.Stderr, "Error writing to file %s: %v\n", jsonfile, err)
+		os.Exit(1)
+	}
 
 }
 
@@ -95,22 +96,5 @@ func PrintPersonTable(data Person) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tNAME\tDEPOSIT")
 	fmt.Fprintf(w, "%s\t%s\t%d\n", data.Id, data.Name)
-	w.Flush()
-}
-
-func PrintTransactionJSON(data *Transaction) {
-	b, err := json.MarshalIndent(data, "", "  ")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error marshalling JSON: %v\n", err)
-		os.Exit(1)
-	}
-	fmt.Println(string(b))
-}
-
-func PrintTransactionTable(data *Transaction) {
-	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "ID\tAMOUNT\tDESCRIPTION\tDATE")
-	formattedDate := data.Date.Format("2006-01-02 15:04")
-	fmt.Fprintf(w, "%s\t%d\t%s\t%s\n", data.Amount, data.Description, formattedDate)
 	w.Flush()
 }

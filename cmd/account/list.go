@@ -1,7 +1,6 @@
 package account
 
 import (
-	"bankycli/internal/core"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
@@ -15,18 +14,22 @@ var (
 		Short: "list users name",
 		Long:  "list a list of users name",
 		Run: func(cmd *cobra.Command, args []string) {
-			//data, err := os.ReadFile("./banky/banky.json")
-			//core.Check(err)
 			bankyPath := os.Getenv("BANKY_PATH")
 			if bankyPath == "" {
 				bankyPath = "./banky/banky.json"
 			}
 			data, err := os.ReadFile(bankyPath)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error reading file %s: %v\n", bankyPath, err)
+				os.Exit(1)
+			}
 
 			// Parse JSON as slice of maps
 			var jsonArray []map[string]interface{}
-			err = json.Unmarshal(data, &jsonArray)
-			core.Check(err)
+			if err := json.Unmarshal(data, &jsonArray); err != nil {
+				fmt.Fprintf(os.Stderr, "Error parsing JSON from %s: %v\n", bankyPath, err)
+				os.Exit(1)
+			}
 
 			//Print Names
 			fmt.Printf("Names:")

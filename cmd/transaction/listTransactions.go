@@ -1,7 +1,6 @@
 package transaction
 
 import (
-	"bankycli/internal/core"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
@@ -15,15 +14,21 @@ var (
 		Use:   "list",
 		Short: "List transactions for a user account",
 		Long:  "List transactions for a user account",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 
 			data, err := os.ReadFile("./banky/banky.json")
-			core.Check(err)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error reading file ./banky/banky.json: %v\n", err)
+				os.Exit(1)
+			}
 
 			var jsonArray []map[string]interface{}
-			err = json.Unmarshal(data, &jsonArray)
-			core.Check(err)
+			if err := json.Unmarshal(data, &jsonArray); err != nil {
+				fmt.Fprintf(os.Stderr, "error parsing JSON from ./banky/banky.json: %v\n", err)
+				os.Exit(1)
+			}
 
+			found := false
 			fmt.Printf("The account with ID: %v\n\n", idList)
 			for _, obj := range jsonArray {
 				idParse, exists := obj["Id"].(string)
@@ -33,10 +38,17 @@ var (
 						fmt.Printf("Amount: %v\n", transaction["Amount"].(float64))
 						fmt.Printf("Date: %v\n", transaction["Date"].(string))
 						fmt.Printf("Description: %v\n\n", transaction["Description"].(string))
+						found = true
+						break
 					}
-					return
 				}
 			}
+			if !found {
+				fmt.Fprintf(os.Stderr, "account with ID '%s' not found\n", idList)
+				os.Exit(1)
+			}
+
+			return nil
 		},
 	}
 )
