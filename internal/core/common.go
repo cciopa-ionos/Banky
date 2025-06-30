@@ -20,13 +20,12 @@ var (
 )
 
 type Person struct {
-	Id      string
-	Name    string
-	Deposit int
+	Id           string
+	Name         string
+	Transactions []Transaction
 }
 
 type Transaction struct {
-	Id          string
 	Amount      int
 	Description string
 	Date        time.Time
@@ -51,6 +50,17 @@ func Check(err error) {
 func JsonFormating(jsonfile string, str interface{}) {
 	var items []interface{}
 
+	//check if banky.json is empty and then add []
+	dataFile, _ := os.Stat(jsonfile)
+	dataFileSize := dataFile.Size()
+
+	if dataFileSize == 0 {
+		if err := os.WriteFile(jsonfile, []byte("[]"), 0666); err != nil {
+			fmt.Printf("Error adding [] to file %s: %v\n", jsonfile, err)
+			return
+		}
+	}
+
 	fileData, err := os.ReadFile(jsonfile)
 	if err != nil {
 		if os.IsNotExist(err) || len(fileData) == 0 {
@@ -60,15 +70,16 @@ func JsonFormating(jsonfile string, str interface{}) {
 		}
 	} else {
 		if err := json.Unmarshal(fileData, &items); err != nil {
+			fmt.Printf("Error: Cannot read %v\n", err)
 			Check(err)
 		}
 	}
-
 	items = append(items, str)
 
 	updatedData, _ := json.MarshalIndent(items, "", "  ")
 
 	os.WriteFile(jsonfile, updatedData, 0666)
+
 }
 
 func PrintPersonJSON(data Person) {
@@ -83,7 +94,7 @@ func PrintPersonJSON(data Person) {
 func PrintPersonTable(data Person) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tNAME\tDEPOSIT")
-	fmt.Fprintf(w, "%s\t%s\t%d\n", data.Id, data.Name, data.Deposit)
+	fmt.Fprintf(w, "%s\t%s\t%d\n", data.Id, data.Name)
 	w.Flush()
 }
 
@@ -100,6 +111,6 @@ func PrintTransactionTable(data *Transaction) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tAMOUNT\tDESCRIPTION\tDATE")
 	formattedDate := data.Date.Format("2006-01-02 15:04")
-	fmt.Fprintf(w, "%s\t%d\t%s\t%s\n", data.Id, data.Amount, data.Description, formattedDate)
+	fmt.Fprintf(w, "%s\t%d\t%s\t%s\n", data.Amount, data.Description, formattedDate)
 	w.Flush()
 }

@@ -9,7 +9,6 @@ var (
 		Use:   "account",
 		Short: "account commands",
 		Long:  "account commands",
-		Run:   func(cmd *cobra.Command, args []string) {},
 	}
 )
 

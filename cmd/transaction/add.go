@@ -27,7 +27,6 @@ var (
 
 			//adding operation to operations.json
 			auxValue := &core.Transaction{
-				Id:          idTr,
 				Amount:      sumTr,
 				Description: description,
 				Date:        time.Now(),
@@ -35,9 +34,6 @@ var (
 
 			// Load config
 			cfg := core.LoadConfig()
-
-			// Write to operations.json (path from config)
-			core.JsonFormating(cfg.OperationsPath, auxValue)
 
 			// Read update banky.json using config
 			data, err := os.ReadFile(cfg.BankyPath)
@@ -52,6 +48,9 @@ var (
 				if exists && idParse == idTr {
 					depositFloat, _ := obj["Deposit"].(float64)
 					obj["Deposit"] = depositFloat + float64(sumTr)
+
+					arrayTransactions, _ := obj["Transactions"].([]interface{})
+					obj["Transactions"] = append(arrayTransactions, auxValue)
 				}
 			}
 

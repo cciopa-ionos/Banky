@@ -4,6 +4,7 @@ import (
 	"bankycli/internal/core"
 	"fmt"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 var (
@@ -16,11 +17,16 @@ var (
 		Long:  "create new account",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			// Create a Person struct
 			if name != "" {
 				fmt.Printf("Created account for %s. \nWelcome to bankycli!\n", name)
 			}
-			auxValue := &core.Person{Id: core.RandSeq(7), Name: name, Deposit: 0}
+			auxValueTrans := &core.Transaction{
+				Amount:      0,
+				Description: "Creating Account",
+				Date:        time.Now(),
+			}
+
+			auxValue := &core.Person{Id: core.RandSeq(7), Name: name, Transactions: []core.Transaction{*auxValueTrans}}
 
 			core.JsonFormating("./banky/banky.json", auxValue)
 

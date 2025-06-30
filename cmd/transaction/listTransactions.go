@@ -17,7 +17,7 @@ var (
 		Long:  "List transactions for a user account",
 		Run: func(cmd *cobra.Command, args []string) {
 
-			data, err := os.ReadFile("./banky/operations.json")
+			data, err := os.ReadFile("./banky/banky.json")
 			core.Check(err)
 
 			var jsonArray []map[string]interface{}
@@ -28,9 +28,13 @@ var (
 			for _, obj := range jsonArray {
 				idParse, exists := obj["Id"].(string)
 				if exists && idParse == idList {
-					fmt.Printf("Amount transfered: %v\n", obj["Amount"].(float64))
-					fmt.Printf("Description: %v\n", obj["Description"].(string))
-					fmt.Printf("Date of the transaction: %v\n\n", obj["Date"].(string))
+					for _, t := range obj["Transactions"].([]interface{}) {
+						transaction, _ := t.(map[string]interface{})
+						fmt.Printf("Amount: %v\n", transaction["Amount"].(float64))
+						fmt.Printf("Date: %v\n", transaction["Date"].(string))
+						fmt.Printf("Description: %v\n\n", transaction["Description"].(string))
+					}
+					return
 				}
 			}
 		},
