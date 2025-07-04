@@ -18,8 +18,9 @@ var (
 
 			data, err := os.ReadFile("./banky/banky.json")
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "error reading file ./banky/banky.json: %v\n", err)
-				os.Exit(1)
+				//fmt.Fprintf(os.Stderr, "error reading file ./banky/banky.json: %v\n", err)
+				//os.Exit(1) !!!!!
+				return fmt.Errorf("error reading file ./banky/banky.json: %w", err)
 			}
 
 			var jsonArray []map[string]interface{}
@@ -38,9 +39,9 @@ var (
 						fmt.Printf("Amount: %v\n", transaction["Amount"].(float64))
 						fmt.Printf("Date: %v\n", transaction["Date"].(string))
 						fmt.Printf("Description: %v\n\n", transaction["Description"].(string))
-						found = true
-						break
 					}
+					found = true
+					break
 				}
 			}
 			if !found {
